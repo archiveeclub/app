@@ -1,0 +1,82 @@
+<Window x:Class="UsbMediaManager.Views.SeriesSearchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="کیا این سریال رو دارن؟" Height="560" Width="620"
+        WindowStartupLocation="CenterScreen" FlowDirection="RightToLeft"
+        FontFamily="Segoe UI, Tahoma">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBox x:Name="QueryBox" Width="400" Padding="6"/>
+            <Button Content="سرچ سریال" Click="OnSearchSeries" Padding="14,6" Margin="8,0,0,0" IsDefault="True"/>
+        </StackPanel>
+
+        <ComboBox x:Name="SeriesBox" Grid.Row="1" DisplayMemberPath="Title"
+                  Padding="6" Margin="0,0,0,12" SelectionChanged="OnSeriesSelected"/>
+
+        <ListView x:Name="HoldersList" Grid.Row="2">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="مشتری" Width="160"
+                        DisplayMemberBinding="{Binding Customer.Name}"/>
+                    <GridViewColumn Header="دیده تا" Width="120"
+                        DisplayMemberBinding="{Binding WatchedText}"/>
+                    <GridViewColumn Header="کل قسمت‌ها" Width="100"
+                        DisplayMemberBinding="{Binding TotalEpisodes}"/>
+                    <GridViewColumn Header="عقب‌مونده" Width="100"
+                        DisplayMemberBinding="{Binding EpisodesBehind}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Window>
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using UsbMediaManager.Models;
+using UsbMediaManager.Services;
+
+namespace UsbMediaManager.Views;
+
+public partial class SeriesSearchWindow : Window
+{
+    private readonly TmdbService _tmdb;
+    private readonly MediaService _media;
+
+    public SeriesSearchWindow(TmdbService tmdb, MediaService media)
+    {
+        InitializeComponent();
+        _tmdb = tmdb;
+        _media = media;
+    }
+
+    private async void OnSearchSeries(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(QueryBox.Text)) return;
+        var results = await _tmdb.SearchAsync(QueryBox.Text.Trim());
+        // فقط سریال‌ها
+        SeriesBox.ItemsSource = results.Where(r => r.Type == MediaType.Series).ToList();
+    }
+
+    private async void OnSeriesSelected(object sender, SelectionChangedEventArgs e)
+    {
+        if (SeriesBox.SelectedItem is not TmdbResult r) return;
+        // اطمینان از اینکه میدیا تو دیتابیس هست
+        var media = await _media.GetOrCreateMediaAsync(r);
+        var holders = await _media.FindHoldersAsync(media.Id);
+
+        HoldersList.ItemsSource = holders.Select(h => new
+        {
+            h.Customer,
+            WatchedText = $"فصل {h.SeasonWatched} قسمت {h.EpisodeWatched}",
+            TotalEpisodes = h.TotalEpisodes?.ToString() ?? "نامشخص",
+            h.EpisodesBehind
+        }).ToList();
+    }
+}

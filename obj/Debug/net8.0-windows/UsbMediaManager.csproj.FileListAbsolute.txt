@@ -1,0 +1,6 @@
+C:\Users\iTcenter\Desktop\a\UsbApp\UsbMediaManager\UsbMediaManager\obj\Debug\net8.0-windows\UsbMediaManager.csproj.AssemblyReference.cache
+C:\Users\iTcenter\Desktop\a\UsbApp\UsbMediaManager\UsbMediaManager\obj\Debug\net8.0-windows\Views\MainWindow.baml
+C:\Users\iTcenter\Desktop\a\UsbApp\UsbMediaManager\UsbMediaManager\obj\Debug\net8.0-windows\App.baml
+C:\Users\iTcenter\Desktop\a\UsbApp\UsbMediaManager\UsbMediaManager\obj\Debug\net8.0-windows\Views\MainWindow.g.cs
+C:\Users\iTcenter\Desktop\a\UsbApp\UsbMediaManager\UsbMediaManager\obj\Debug\net8.0-windows\App.g.cs
+C:\Users\iTcenter\Desktop\a\UsbApp\UsbMediaManager\UsbMediaManager\obj\Debug\net8.0-windows\UsbMediaManager_MarkupCompile.cache

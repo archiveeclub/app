@@ -1,0 +1,50 @@
+<Window x:Class="UsbMediaManager.Views.CustomerRegisterDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ثبت مشتری جدید" Height="260" Width="420"
+        WindowStartupLocation="CenterScreen" FlowDirection="RightToLeft"
+        FontFamily="Segoe UI, Tahoma">
+    <StackPanel Margin="20">
+        <TextBlock Text="این فلش ناشناسه. مال کیه؟" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,12"/>
+        <TextBlock Text="اسم مشتری:"/>
+        <TextBox x:Name="NameBox" Padding="6" Margin="0,4,0,12"/>
+        <TextBlock Text="یا انتخاب مشتری موجود:"/>
+        <ComboBox x:Name="ExistingBox" DisplayMemberPath="Name" SelectedValuePath="Id"
+                  Padding="6" Margin="0,4,0,16"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button Content="ثبت" Width="90" Padding="6" Click="OnOk" IsDefault="True"/>
+            <Button Content="انصراف" Width="90" Padding="6" Margin="8,0,0,0" Click="OnCancel" IsCancel="True"/>
+        </StackPanel>
+    </StackPanel>
+</Window>
+using System.Collections.Generic;
+using System.Windows;
+using UsbMediaManager.Models;
+
+namespace UsbMediaManager.Views;
+
+public partial class CustomerRegisterDialog : Window
+{
+    public string CustomerName => NameBox.Text.Trim();
+    public int? ExistingCustomerId { get; private set; }
+
+    public CustomerRegisterDialog(List<Customer> existing)
+    {
+        InitializeComponent();
+        ExistingBox.ItemsSource = existing;
+    }
+
+    private void OnOk(object sender, RoutedEventArgs e)
+    {
+        if (ExistingBox.SelectedValue is int id)
+            ExistingCustomerId = id;
+        else if (string.IsNullOrWhiteSpace(CustomerName))
+        {
+            MessageBox.Show("اسم مشتری رو وارد کن یا یکی رو انتخاب کن.");
+            return;
+        }
+        DialogResult = true;
+    }
+
+    private void OnCancel(object sender, RoutedEventArgs e) => DialogResult = false;
+}

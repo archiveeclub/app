@@ -1,0 +1,38 @@
+<Window x:Class="UsbMediaManager.Views.DrivePopup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="فلش شناسایی شد" Height="480" Width="420"
+        WindowStartupLocation="CenterScreen" Topmost="True"
+        FlowDirection="RightToLeft" FontFamily="Segoe UI, Tahoma">
+    <StackPanel Margin="16">
+        <TextBlock x:Name="HeaderText" FontSize="17" FontWeight="Bold" Margin="0,0,0,12"/>
+        <ListView x:Name="MediaList" Height="360">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="4">
+                        <Image Source="{Binding PosterUrl}" Width="40" Height="60" Margin="0,0,8,0"/>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding Type}" Foreground="#4a6" FontSize="11"/>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackPanel>
+</Window>
+using System.Collections.Generic;
+using System.Windows;
+using UsbMediaManager.Models;
+
+namespace UsbMediaManager.Views;
+
+public partial class DrivePopup : Window
+{
+    public DrivePopup(Customer customer, List<MediaItem> media)
+    {
+        InitializeComponent();
+        HeaderText.Text = $"فلش مال {customer.Name} — {media.Count} عنوان";
+        MediaList.ItemsSource = media;
+    }
+}
